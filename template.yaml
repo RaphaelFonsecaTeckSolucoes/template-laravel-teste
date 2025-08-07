@@ -23,7 +23,7 @@ spec:
         name:
           title: Nome do Componente
           type: string
-          description: "Nome único para o componente (ex: meu-servico-laravel)."
+          description: 'Nome único para o componente (ex: meu-servico-laravel).'
           ui:field: EntityNamePicker
         description:
           title: Descrição
