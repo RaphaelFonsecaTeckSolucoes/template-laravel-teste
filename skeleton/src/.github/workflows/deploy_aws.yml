@@ -1,0 +1,169 @@
+name: Deploy to AWS
+
+on:
+  workflow_dispatch: 
+  #push: 
+   # branches:
+   #   - main
+   #   - master
+
+env: 
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY_APP: devops-exemplo-php-laravel
+  AWS_ENV: dev #latest/dev/homolog
+  AWS_CLUSTER: cluster-dev #cluster-dev/cluster-homologacao
+
+  APP_NAME: devops-exemplo-php-laravel
+  APP_ENV: dev
+  APP_KEY: ${{ secrets.APP_KEY }}
+  APP_DEBUG: true
+  APP_URL: https://localhost
+
+  DB_CONNECTION: mysql
+  DB_HOST: ${{ secrets.DB_HOST }}
+  DB_PORT: 23306
+  DB_DATABASE: db-devops-dev
+  DB_USERNAME: DB_USER_DEVOPS
+  DB_PASSWORD: Frosty-Stricken2-Cabana
+
+  SESSION_DRIVER: file
+
+jobs:
+  build:
+    name: Building ECR
+    runs-on: ubuntu-latest
+
+    steps:    
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Build, tag, and push image to Amazon ECR Private
+      id: build-image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        docker build . \
+            --build-arg APP_NAME=${{ env.APP_NAME }} \
+            --build-arg APP_ENV=${{ env.APP_ENV }} \
+            --build-arg APP_KEY=${{ env.APP_KEY }} \
+            --build-arg APP_DEBUG=${{ env.APP_DEBUG }} \
+            --build-arg APP_URL=${{ env.APP_URL }} \
+            --build-arg DB_CONNECTION=${{ env.DB_CONNECTION }} \
+            --build-arg DB_HOST=${{ env.DB_HOST }} \
+            --build-arg DB_PORT=${{ env.DB_PORT }} \
+            --build-arg DB_DATABASE=${{ env.DB_DATABASE }} \
+            --build-arg DB_USERNAME=${{ env.DB_USERNAME }} \
+            --build-arg DB_PASSWORD=${{ env.DB_PASSWORD }} \
+            --build-arg SESSION_DRIVER=${{ env.SESSION_DRIVER }} \
+            -t ${{ env.APP_NAME }}:${{ env.AWS_ENV }}
+        docker tag ${{ env.APP_NAME }}:${{ env.AWS_ENV }} $ECR_REGISTRY/$ECR_REPOSITORY_APP:${{ env.AWS_ENV }}
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY_APP:${{ env.AWS_ENV }}
+
+# deploy:
+#  needs: build
+#     name: Deploy to ECS
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v4
+
+#       - name: Configure AWS credentials
+#         uses: aws-actions/configure-aws-credentials@v1
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           aws-region: ${{ env.AWS_REGION }}
+
+#       - name: Update ECS Service
+#         run: |
+#           aws ecs update-service \
+#           --cluster cluster-dev \
+#           --service template2 \
+#           --force-new-deployment
+          
+#   notification:
+#     needs: deploy
+#     runs-on: ubuntu-latest
+
+#     steps:
+#     - name: Checkout code
+#       uses: actions/checkout@v2
+
+#     - name: Msg to Slack for Manual Deploy
+#       if: ${{ github.event_name == 'workflow_dispatch' }}
+#       id: slack-manual
+#       uses: slackapi/slack-github-action@v1.26.0
+#       with:
+#         payload: |
+#           {
+#             "text": "Novo build realizado no repositório: ${{ github.repository }}\nExecutado por: ${{ github.actor }}\n*Deploy executado manualmente*\nStatus do deploy: ${{ job.status }}",
+#             "blocks": [
+#               {
+#                 "type": "section",
+#                 "text": {
+#                   "type": "mrkdwn",
+#                   "text": "*Novo build realizado no repositório*: ${{ github.repository }}\n*Executado por*: ${{ github.actor }}\n*Deploy executado manualmente*\n*Status do deploy*: ${{ job.status }}"
+#                 }
+#               }
+#             ]
+#           }
+#       env:
+#         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+#         SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+#     - name: Msg to Slack for Commit Deploy
+#       if: ${{ github.event_name == 'push' }}
+#       id: slack-commit
+#       uses: slackapi/slack-github-action@v1.26.0
+#       with:
+#         payload: |
+#           {
+#             "text": "Novo build realizado no repositório: ${{ github.repository }}\nExecutado por: ${{ github.actor }}\nCommit que gerou o deploy: <${{ github.event.head_commit.url }}|Ver commit>\nStatus do deploy: ${{ job.status }}",
+#             "blocks": [
+#               {
+#                 "type": "section",
+#                 "text": {
+#                   "type": "mrkdwn",
+#                   "text": "*Novo build realizado no repositório*: ${{ github.repository }}\n*Executado por*: ${{ github.actor }}\n*Commit que gerou o deploy*: <${{ github.event.head_commit.url }}|Ver commit>\n*Status do deploy*: ${{ job.status }}"
+#                 }
+#               }
+#             ]
+#           }
+#       env:
+#         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+#         SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+#     - name: Msg to Slack for Cron Deploy
+#       if: ${{ github.event_name == 'schedule' }}
+#       id: slack-cron
+#       uses: slackapi/slack-github-action@v1.26.0
+#       with:
+#         payload: |
+#           {
+#             "text": "Novo build realizado no repositório: ${{ github.repository }}\nExecutado por: ${{ github.actor }}\n*Deploy agendado via cron*\nStatus do deploy: ${{ job.status }}",
+#             "blocks": [
+#               {
+#                 "type": "section",
+#                 "text": {
+#                   "type": "mrkdwn",
+#                   "text": "*Novo build realizado no repositório*: ${{ github.repository }}\n*Executado por*: ${{ github.actor }}\n*Deploy agendado via cron*\n*Status do deploy*: ${{ job.status }}"
+#                 }
+#               }
+#             ]
+      #     }
+      # env:
+      #   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      #   SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK

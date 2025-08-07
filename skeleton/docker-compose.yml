@@ -1,0 +1,16 @@
+version: "3.9"
+services:
+  php-nginx:
+    # container_name: php-nginx
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+    restart: unless-stopped
+    tty: true
+    volumes:
+      - ./:/var/www
+      - ./docker/php/extra-php.ini:/usr/local/etc/php/conf.d/extra-php.ini
+      - ./docker/php/extra-php-fpm.conf:/etc/php8/php-fpm.d/www.conf
+    ports:
+      - "8080:80" #http
+      # - "443:443" #https

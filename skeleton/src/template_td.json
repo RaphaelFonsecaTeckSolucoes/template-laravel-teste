@@ -1,0 +1,140 @@
+{
+    "taskDefinitionArn": "arn:aws:ecs:us-east-1:528547794217:task-definition/template-td:6",
+    "containerDefinitions": [
+        {
+            "name": "template",
+            "image": "528547794217.dkr.ecr.us-east-1.amazonaws.com/homolog-fc-template",
+            "cpu": 0,
+            "portMappings": [
+                {
+                    "name": "template-80-tcp",
+                    "containerPort": 80,
+                    "hostPort": 80,
+                    "protocol": "tcp",
+                    "appProtocol": "http"
+                }
+            ],
+            "essential": true,
+            "environment": [
+                {
+                    "name": "NEW_RELIC_APP_NAME",
+                    "value": "Template"
+                },
+                {
+                    "name": "NEW_RELIC_LICENSE_KEY",
+                    "value": "d5526b1f3a63b616d186027ba7df633cFFFFNRAL"
+                }
+            ],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/template-td",
+                    "awslogs-create-group": "true",
+                    "awslogs-region": "us-east-1",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            },
+            "systemControls": []
+        },
+        {
+            "name": "newrelic-infra",
+            "image": "newrelic/nri-ecs:1.11.9",
+            "cpu": 256,
+            "memoryReservation": 512,
+            "portMappings": [],
+            "essential": true,
+            "environment": [
+                {
+                    "name": "NRIA_CUSTOM_ATTRIBUTES",
+                    "value": "{\"nrDeployMethod\":\"downloadPage\"}"
+                },
+                {
+                    "name": "NRIA_IS_FORWARD_ONLY",
+                    "value": "true"
+                },
+                {
+                    "name": "NRIA_PASSTHROUGH_ENVIRONMENT",
+                    "value": "ECS_CONTAINER_METADATA_URI,ECS_CONTAINER_METADATA_URI_V4,FARGATE"
+                },
+                {
+                    "name": "FARGATE",
+                    "value": "true"
+                },
+                {
+                    "name": "NRIA_OVERRIDE_HOST_ROOT",
+                    "value": ""
+                },
+                {
+                    "name": "NRIA_IGNORE_CONTAINER",
+                    "value": "true"
+                }
+            ],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "secrets": [
+                {
+                    "name": "NRIA_LICENSE_KEY",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:528547794217:secret:NewRelicLicenseKeySecret-5yKURbiWmd40-1FALF7"
+                }
+            ],
+            "systemControls": []
+        }
+    ],
+    "family": "template-td",
+    "executionRoleArn": "arn:aws:iam::528547794217:role/ecsTaskExecutionRole",
+    "networkMode": "awsvpc",
+    "revision": 6,
+    "volumes": [],
+    "status": "ACTIVE",
+    "requiresAttributes": [
+        {
+            "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+        },
+        {
+            "name": "ecs.capability.execution-role-awslogs"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.ecr-auth"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+        },
+        {
+            "name": "ecs.capability.secrets.asm.environment-variables"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.21"
+        },
+        {
+            "name": "ecs.capability.execution-role-ecr-pull"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+        },
+        {
+            "name": "ecs.capability.task-eni"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
+        }
+    ],
+    "placementConstraints": [],
+    "compatibilities": [
+        "EC2",
+        "FARGATE"
+    ],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "1024",
+    "memory": "2048",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    },
+    "registeredAt": "2024-07-26T18:28:44.219Z",
+    "registeredBy": "arn:aws:iam::528547794217:user/Paulo.Bezerra",
+    "tags": []
+}

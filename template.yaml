@@ -1,0 +1,88 @@
+# template.yaml
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: laravel-docker-template
+  title: Projeto Laravel com Docker
+  description: Cria um serviço Laravel conteinerizado com Nginx, PHP-FPM, MySQL e Redis.
+  tags:
+    - laravel
+    - php
+    - docker
+spec:
+  owner: team-infra # O time dono deste template
+  type: service
+
+  # Parâmetros que o usuário irá preencher no formulário do Backstage
+  parameters:
+    - title: Detalhes do Componente
+      required:
+        - name
+        - owner
+      properties:
+        name:
+          title: Nome do Componente
+          type: string
+          description: Nome único para o componente (ex: meu-servico-laravel).
+          ui:field: EntityNamePicker
+        description:
+          title: Descrição
+          type: string
+          description: Uma breve descrição do serviço.
+        owner:
+          title: Dono
+          type: string
+          description: Dono do componente, pode ser um time ou usuário.
+          ui:field: OwnerPicker
+          ui:options:
+            allowedKinds: ['Group', 'User']
+
+    - title: Destino do Repositório
+      required:
+        - repoUrl
+      properties:
+        repoUrl:
+          title: Localização do Repositório
+          type: string
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts:
+              - github.com # Adapte para seu provedor Git (gitlab.com, bitbucket.org, etc.)
+
+  # Passos que o Backstage executa
+  steps:
+    - id: fetch-skeleton
+      name: Buscando o Esqueleto do Projeto
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          name: ${{ parameters.name }}
+          description: ${{ parameters.description }}
+          owner: ${{ parameters.owner }}
+          destination: ${{ parameters.repoUrl | parseRepoUrl }}
+
+    - id: publish
+      name: Publicando o Repositório
+      action: publish:github # Adapte para publish:gitlab, etc.
+      input:
+        allowedHosts: ['github.com']
+        description: 'Repositório para ${{ parameters.name }}'
+        repoUrl: ${{ parameters.repoUrl }}
+        defaultBranch: main
+
+    - id: register
+      name: Registrando no Catálogo
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: '/catalog-info.yaml'
+
+  # Saída para o usuário
+  output:
+    links:
+      - title: Repositório Criado
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Abrir no Catálogo
+        icon: catalog
+        entityRef: ${{ steps.register.output.entityRef }}
