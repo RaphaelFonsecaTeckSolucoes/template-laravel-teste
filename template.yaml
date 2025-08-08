@@ -65,7 +65,6 @@ spec:
       name: Publicando o Repositório
       action: publish:github # Adapte para publish:gitlab, etc.
       input:
-        allowedHosts: ['github.com']
         description: 'Repositório para ${{ parameters.name }}'
         repoUrl: ${{ parameters.repoUrl }}
         defaultBranch: main
