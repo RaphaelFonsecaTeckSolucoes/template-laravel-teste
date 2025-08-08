@@ -55,7 +55,7 @@ spec:
       name: Buscando o Esqueleto do Projeto
       action: fetch:template
       input:
-        url: ./skeleton
+        url: https://github.com/RaphaelFonsecaTeckSolucoes/template-laravel-teste
         values:
           name: ${{ parameters.name }}
           description: ${{ parameters.description }}
