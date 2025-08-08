@@ -52,10 +52,10 @@ spec:
   # Passos que o Backstage executa
   steps:
     - id: fetch-skeleton
-      name: Buscando o Esqueleto do Projeto
       action: fetch:template
       input:
         url: https://github.com/RaphaelFonsecaTeckSolucoes/template-laravel-teste
+        targetPath: skeleton
         values:
           name: ${{ parameters.name }}
           description: ${{ parameters.description }}
