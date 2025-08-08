@@ -68,7 +68,6 @@ spec:
         description: 'Repositório para ${{ parameters.name }}'
         repoUrl: ${{ parameters.repoUrl }}
         defaultBranch: main
-        commitMessage: 'feat: Initial commit for ${{ parameters.name }}'
 
     - id: register
       name: Registrando no Catálogo
