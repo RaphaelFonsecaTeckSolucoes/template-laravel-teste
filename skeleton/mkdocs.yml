@@ -1,0 +1,10 @@
+# mkdocs.yml
+
+site_name: 'testando-template' # Nome que aparecerá no topo da documentação
+
+# Define a navegação. Adicione mais itens aqui conforme cria mais páginas.
+nav:
+  - Introdução: index.md
+
+plugins:
+  - techdocs-core
