@@ -54,8 +54,7 @@ spec:
     - id: fetch-skeleton
       action: fetch:template
       input:
-        url: https://github.com/RaphaelFonsecaTeckSolucoes/template-laravel-teste
-        targetPath: skeleton
+        url: ./skeleton
         values:
           name: ${{ parameters.name }}
           description: ${{ parameters.description }}
