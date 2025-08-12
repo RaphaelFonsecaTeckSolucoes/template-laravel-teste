@@ -1,0 +1,22 @@
+# api/openapi.yaml
+
+openapi: 3.0.0
+info:
+  title: API do Testando Template
+  version: 1.0.0
+  description: Uma API de exemplo para o projeto.
+paths:
+  /exemplo:
+    get:
+      summary: Retorna uma mensagem de exemplo
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensagem:
+                    type: string
+                    example: "Olá, mundo!"

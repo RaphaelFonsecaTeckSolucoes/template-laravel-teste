@@ -1,0 +1,15 @@
+# api-info.yaml
+
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  # Este nome deve ser único no catálogo
+  name: testando-template-api-api
+  description: A API principal do serviço testando-template-api
+spec:
+  type: openapi
+  lifecycle: experimental
+  owner: group:default/guest # O mesmo dono do componente
+  # A linha mais importante: aponta para a definição da API
+  definition:
+    $text: ./api/openapi.yaml
