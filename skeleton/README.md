@@ -1,8 +1,8 @@
-# [Project Title]
+# [Título do Projeto]
 
-A brief and clear description of the project, its purpose, and the problem it solves.
+Uma descrição breve e clara do projeto, seu propósito e o problema que ele resolve.
 
-## Technologies Used
+## Tecnologias Utilizadas
 
 - **PHP 8.3**
 - **Laravel 11**
@@ -14,74 +14,74 @@ A brief and clear description of the project, its purpose, and the problem it so
 - **AWS Fargate**
 - **CI/CD**
 
-## Architecture and Code Flow
+## Arquitetura e Fluxo de Código
 
-This project is containerized using Docker, running PHP 8.3, Nginx, and Supervisor in a single PHP-FPM-8.3 image.
+Este projeto é containerizado usando Docker, rodando PHP 8.3, Nginx e Supervisor em uma única imagem PHP-FPM-8.3.
 
 ### CI/CD
 
-The project is configured with two pipelines:
-- **Build**: Builds the Docker image and pushes it to the AWS ECR repository.
-- **Deploy**: Deploys the image to a serverless Fargate cluster, with load balancing and autoscaling services.
+O projeto está configurado com duas pipelines:
+- **Build**: Constrói a imagem Docker e a envia para o repositório do AWS ECR.
+- **Deploy**: Implanta a imagem em um cluster serverless Fargate, com serviços de load balancing e autoscaling.
 
-### Code Flow
+### Fluxo de Código
 
-To maintain consistency and code quality, the following flow is recommended:
+Para manter a consistência e a qualidade do código, o seguinte fluxo é recomendado:
 
 **Routes** -> **Middleware** -> **Controller** -> **Actions** -> **Repository**
 
-All business logic must be contained within the `Actions`.
+Toda a lógica de negócio deve estar contida nas `Actions`.
 
-## Getting Started (Local Environment)
+## Começando (Ambiente Local)
 
-### Prerequisites
+### Pré-requisitos
 
-- [Docker](https://www.docker.com/get-started) installed on your machine.
+- [Docker](https://www.docker.com/get-started) instalado na sua máquina.
 
-### Setup Instructions
+### Instruções de Setup
 
-1.  **Clone the repository:**
+1.  **Clonar o repositório:**
     ```sh
     git clone [URL_DO_REPOSITORIO]
     cd [NOME_DA_PASTA_DO_PROJETO]
     ```
 
-2.  **Create the environment file:**
-    Duplicate the `.env.example` file located in the `src/` directory and rename it to `.env`.
+2.  **Criar o arquivo de ambiente:**
+    Copie o arquivo `.env.example` localizado no diretório `src/` e renomeie-o para `.env`.
     ```sh
     cp src/.env.example src/.env
     ```
-    Update the variables in `src/.env` with your local configuration, especially the database connection details.
+    Atualize as variáveis no arquivo `src/.env` com sua configuração local, especialmente os detalhes de conexão com o banco de dados.
 
-3.  **Build and run the containers:**
+3.  **Construir e rodar os containers:**
     ```sh
     docker-compose up --build -d
     ```
 
-4.  **Generate the application key:**
-    Enter the container and run the artisan command to generate the key.
+4.  **Gerar a chave da aplicação:**
+    Entre no container e rode o comando artisan para gerar a chave.
     ```sh
     docker-compose exec php-nginx php artisan key:generate
     ```
 
-The application should now be accessible at [http://localhost:8080](http://localhost:8080).
+A aplicação deve estar acessível em [http://localhost:8080](http://localhost:8080).
 
-## Testing
+## Testes
 
-To run the project's automated tests, execute the following command:
+Para rodar os testes automatizados do projeto, execute o seguinte comando:
 
 ```sh
 docker-compose exec php-nginx php artisan test
 ```
 
-## Documentation
+## Documentação
 
-Project documentation is generated using [MkDocs](https://www.mkdocs.org/). The source files are in the `docs/` directory.
+A documentação do projeto é gerada usando [MkDocs](https://www.mkdocs.org/). Os arquivos-fonte estão no diretório `docs/`.
 
-To view the documentation locally, you may need to install MkDocs and run it, or check if it's integrated into the project's build process.
+Para visualizar a documentação localmente, pode ser necessário instalar o MkDocs e executá-lo, ou verificar se ele está integrado ao processo de build do projeto.
 
-## Notes
+## Notas
 
-- Ensure that the database is properly configured and that the environment variables are correctly set in the `.env` file.
-- Keep the code well-documented and organized to facilitate project maintenance and evolution.
-- Follow the recommended code flow to ensure development consistency and quality.
+- Certifique-se de que o banco de dados está configurado corretamente e que as variáveis de ambiente estão definidas no arquivo `.env`.
+- Mantenha o código bem documentado e organizado para facilitar a manutenção e evolução do projeto.
+- Siga o fluxo de código recomendado para garantir a consistência e qualidade do desenvolvimento.
